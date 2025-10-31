@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynamic Spectrum Access</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; color: #333; }
+header { background: #0077cc; color: white; padding: 20px; text-align: center; position: relative; }
+
+#logoutBtn {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background-color: #ff4b4b;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: none;
+}
+#logoutBtn:hover { background-color: #d43f3f; }
+
+.container { max-width: 400px; margin: 40px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center; }
+.container input, .container button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
+.container button { background-color: #0077cc; color: white; border: none; cursor: pointer; }
+.container button:hover { background-color: #005fa3; }
+.error { color: red; } .success { color: green; }
+
+.tab { overflow: hidden; background-color: #fff; margin: 20px auto 0; max-width: 900px; border-radius: 10px 10px 0 0; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+.tab button { background-color: inherit; border: none; outline: none; cursor: pointer; padding: 14px 20px; transition: 0.3s; font-size: 16px; }
+.tab button:hover { background-color: #e7f0fc; }
+.tab button.active { background-color: #0077cc; color: white; border-radius: 10px 10px 0 0; }
+.tabcontent { display: none; padding: 20px; max-width: 900px; margin: 0 auto 20px; background-color: white; border-radius: 0 0 10px 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+
+table { width: 100%; border-collapse: collapse; display:none; }
+th, td { border: 1px solid #ccc; padding: 8px; text-align: left; } 
+th { background-color: #0077cc; color: white; }
+
+#showDataBtn, #hideDataBtn {
+  background:#0077cc; 
+  color:white; 
+  border:none; 
+  padding:8px 15px; 
+  border-radius:5px; 
+  cursor:pointer; 
+  margin-bottom: 10px;
+}
+#showDataBtn:hover, #hideDataBtn:hover { background:#005fa3; }
+
+/* Accordion Styles */
+.accordionBtn {
+  background-color: #f1f1f1;
+  color: #0077cc;
+  cursor: pointer;
+  padding: 12px 20px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 16px;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  transition: 0.3s;
+}
+.accordionBtn:hover { background-color: #e0e0e0; }
+.panel {
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  padding-left: 20px;
+  border-left: 2px solid #0077cc;
+  border-right: 2px solid #0077cc;
+  border-bottom: 2px solid #0077cc;
+  margin-bottom: 5px;
+  border-radius: 0 0 5px 5px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Dynamic Spectrum Access</h1>
+  <button id="logoutBtn">Log Out</button>
+</header>
+
+<!-- Welcome / Choice -->
+<div class="container" id="choiceForm">
+  <h2>Welcome!</h2>
+  <p>Please login or register to access the website.</p>
+  <button id="loginBtn">Login</button>
+  <button id="registerBtn">Register</button>
+</div>
+
+<!-- Login Form -->
+<div class="container" id="loginForm" style="display:none;">
+  <h2>Login</h2>
+  <input type="text" id="loginUsername" placeholder="Username">
+  <input type="password" id="loginPassword" placeholder="Password">
+  <button id="doLogin">Login</button>
+  <p class="error" id="loginError"></p>
+  <button id="backLogin">Back</button>
+</div>
+
+<!-- Registration Form -->
+<div class="container" id="registerForm" style="display:none;">
+  <h2>Register</h2>
+  <input type="text" id="regUsername" placeholder="Username">
+  <input type="password" id="regPassword" placeholder="Password">
+  <input type="number" id="otp" placeholder="Enter One-Time PIN">
+  <button id="doRegister">Register</button>
+  <p class="error" id="regError"></p>
+  <p class="success" id="regSuccess"></p>
+  <button id="backRegister">Back</button>
+</div>
+
+<!-- Tabs -->
+<div class="tab" id="tabs" style="display:none;">
+  <button class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
+  <button class="tablinks" onclick="openTab(event, 'Contents')">Contents</button>
+  <button class="tablinks" onclick="openTab(event, 'Stakeholders')">Stakeholders</button>
+  <button class="tablinks" onclick="openTab(event, 'SpectrumAccess')">Spectrum Access</button>
+  <button class="tablinks" onclick="openTab(event, 'AdminPanel')" id="adminTab" style="display:none;">Admin Panel</button>
+</div>
+
+<!-- About Section -->
+<div id="About" class="tabcontent">
+  <h2>About Dynamic Spectrum Access</h2>
+  <p>
+    Dynamic Spectrum Access (DSA) is a technology that allows efficient use of the radio frequency spectrum by dynamically allocating channels to users. This website demonstrates user management and real-time status tracking for DSA systems.
+  </p>
+  <p>
+    A cognitive radio is used to scan the 433MHz - 450MHz frequency band to determine and identify points on the frequency band that are open and allow users to opportunistically access the free bands.
+  </p>
+</div>
+
+<!-- Contents Section -->
+<div id="Contents" class="tabcontent">
+  <h2>Contents</h2>
+  <div class="accordion">
+    <button class="accordionBtn">Introduction to DSA</button>
+    <div class="panel"><p>Dynamic Spectrum Access (DSA), a method for efficiently utilizing radio frequency spectrum and enabling opportunistic communication.</p></div>
+
+    <button class="accordionBtn">System Objectives</button>
+    <div class="panel"><p>Understand the main goals of this DSA system, including real-time spectrum monitoring, user management, and spectrum optimization.</p></div>
+
+    <button class="accordionBtn">User Roles & Access</button>
+    <div class="panel"><p>Explore the different roles within the system—users and admin—with their corresponding access rights and permissions.</p></div>
+
+    <button class="accordionBtn">Project Timeline</button>
+    <div class="panel"><p>Timeline of project milestones, from development to deployment and testing.</p></div>
+
+    <button class="accordionBtn">Resources & References</button>
+    <div class="panel"><p>Resources, references, and tools used to develop and support the DSA system.</p></div>
+
+    <button class="accordionBtn">Contact Information</button>
+    <div class="panel"><p>Email: jnrmohale18@gmail.com<br>Tel: 081 500 5949</p></div>
+  </div>
+</div>
+
+<!-- Stakeholders Section -->
+<div id="Stakeholders" class="tabcontent">
+  <h2>Stakeholders</h2>
+  <div style="margin-bottom: 15px;">
+    <img src="image.png" alt="Tshepo Mabote" style="width:100px; border-radius:50%; vertical-align:middle; margin-right:10px;">
+    <strong>Tshepo Mabote</strong> – Project Manager, oversees implementation and testing. Mr. Mabote is a final-year student at the University of Johannesburg.
+  </div>
+
+  <div style="margin-bottom: 15px;">
+    <img src="image.png" alt="Mr Lucas Tivani" style="width:100px; border-radius:50%; vertical-align:middle; margin-right:10px;">
+    <strong>Lucas Tivani</strong> – Project Supervisor. Mr. Tivani is an experienced academic in Electrical and Electronic Engineering Science and IT.
+  </div>
+
+  <div style="margin-bottom: 15px;">
+    <img src="image.png" alt="Mr Ntsako Mabunda" style="width:100px; border-radius:50%; vertical-align:middle; margin-right:10px;">
+    <strong>Ntsako Mabunda</strong> – External Project Supervisor. Mr. Mabunda has vast experience in telecommunications.
+  </div>
+
+  <div style="margin-bottom: 15px;">
+    <img src="image.png" alt="CSIR" style="width:100px; border-radius:50%; vertical-align:middle; margin-right:10px;">
+    <strong>CSIR</strong> – Project Sponsor. The Council for Scientific and Industrial Research (CSIR) is a leading research organisation accelerating socioeconomic prosperity in South Africa.
+  </div>
+</div>
+
+<!-- Spectrum Access Section -->
+<div id="SpectrumAccess" class="tabcontent">
+  <h2>Spectrum Access</h2>
+
+  <button class="accordionBtn">Spectrum Availability</button>
+  <div class="panel">
+    <p id="spectrumData">Fetching data from ESP32...</p>
+  </div>
+
+  <button class="accordionBtn">Spectrum Pricing</button>
+  <div class="panel">
+    <p>Example Pricing:<br>Low Band: R150/hr<br>High Band: R250/hr</p>
+  </div>
+</div>
+
+<!-- Admin Panel -->
+<div id="AdminPanel" class="tabcontent">
+  <h2>Registered Users Details</h2>
+  <button id="showDataBtn">Show User Data</button>
+  <button id="hideDataBtn" style="display:none;">Hide User Data</button>
+  <table id="usersTable">
+    <tr><th>Username</th><th>Password</th><th>Status</th></tr>
+  </table>
+</div>
+
+<script>
+const OTP = 2160;
+let currentUser = null;
+let activeUsers = [];
+let users = JSON.parse(localStorage.getItem("users")) || { "admin":"admin123", "user":"user123" };
+
+const choiceForm = document.getElementById("choiceForm");
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+const adminTab = document.getElementById("adminTab");
+const usersTable = document.getElementById("usersTable");
+const logoutBtn = document.getElementById("logoutBtn");
+const showDataBtn = document.getElementById("showDataBtn");
+const hideDataBtn = document.getElementById("hideDataBtn");
+
+// Navigation
+document.getElementById("loginBtn").onclick = () => { choiceForm.style.display = "none"; loginForm.style.display = "block"; };
+document.getElementById("registerBtn").onclick = () => { choiceForm.style.display = "none"; registerForm.style.display = "block"; };
+document.getElementById("backLogin").onclick = () => { loginForm.style.display = "none"; choiceForm.style.display = "block"; document.getElementById("loginError").textContent = ""; };
+document.getElementById("backRegister").onclick = () => { registerForm.style.display = "none"; choiceForm.style.display = "block"; document.getElementById("regError").textContent = ""; document.getElementById("regSuccess").textContent = ""; };
+
+// Login
+document.getElementById("doLogin").onclick = () => {
+  const username = document.getElementById("loginUsername").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+  const errorMsg = document.getElementById("loginError");
+
+  if(users[username] && users[username] === password){
+    currentUser = username;
+    if(!activeUsers.includes(username)) activeUsers.push(username);
+
+    loginForm.style.display = "none";
+    document.getElementById("tabs").style.display = "block";
+    document.getElementById("defaultOpen").click();
+    logoutBtn.style.display = "block";
+    alert(`Welcome, ${username}!`);
+
+    adminTab.style.display = (currentUser === "admin") ? "inline-block" : "none";
+    if(currentUser === "admin") hideAdminData();
+  } else errorMsg.textContent = "Invalid username or password!";
+};
+
+// Register
+document.getElementById("doRegister").onclick = () => {
+  const username = document.getElementById("regUsername").value.trim();
+  const password = document.getElementById("regPassword").value.trim();
+  const otpInput = parseInt(document.getElementById("otp").value);
+  const errorMsg = document.getElementById("regError");
+  const successMsg = document.getElementById("regSuccess");
+
+  if(!username || !password){ errorMsg.textContent = "Please enter username and password!"; successMsg.textContent = ""; return; }
+  if(otpInput !== OTP){ errorMsg.textContent = "Incorrect One-Time PIN!"; successMsg.textContent = ""; return; }
+
+  users[username] = password;
+  localStorage.setItem("users", JSON.stringify(users));
+  errorMsg.textContent = "";
+  successMsg.textContent = "Registration successful! You can now log in.";
+};
+
+// Logout
+logoutBtn.onclick = () => {
+  if(currentUser) { const index = activeUsers.indexOf(currentUser); if(index > -1) activeUsers.splice(index,1); }
+
+  currentUser = null;
+  logoutBtn.style.display = "none";
+  document.getElementById("tabs").style.display = "none";
+  choiceForm.style.display = "block";
+  adminTab.style.display = "none";
+  hideAdminData();
+
+  const sections = document.getElementsByClassName("tabcontent");
+  for(let i=0;i<sections.length;i++) sections[i].style.display="none";
+  alert("You have been logged out securely.");
+};
+
+// Tabs
+function openTab(evt, tabName){
+  const tabcontent = document.getElementsByClassName("tabcontent");
+  for(let i=0;i<tabcontent.length;i++) tabcontent[i].style.display="none";
+  const tablinks = document.getElementsByClassName("tablinks");
+  for(let i=0;i<tablinks.length;i++) tablinks[i].className = tablinks[i].className.replace(" active","");
+  document.getElementById(tabName).style.display="block";
+  evt.currentTarget.className += " active";
+}
+
+// Admin Data
+showDataBtn.onclick = () => {
+  const enteredPin = prompt("Enter admin access password:");
+  if(enteredPin === "1997"){ updateUsersTable(); usersTable.style.display = "table"; showDataBtn.style.display = "none"; hideDataBtn.style.display = "inline-block"; }
+  else alert("Incorrect password. Access denied!");
+};
+hideDataBtn.onclick = () => { usersTable.style.display = "none"; hideDataBtn.style.display = "none"; showDataBtn.style.display = "inline-block"; };
+function hideAdminData(){ usersTable.style.display = "none"; showDataBtn.style.display = "inline-block"; hideDataBtn.style.display = "none"; }
+function updateUsersTable(){
+  usersTable.innerHTML = "<tr><th>Username</th><th>Password</th><th>Status</th></tr>";
+  for(const username in users){
+    const row = usersTable.insertRow();
+    row.insertCell(0).textContent = username;
+    row.insertCell(1).textContent = users[username];
+    row.insertCell(2).textContent = activeUsers.includes(username) ? "Online" : "Offline";
+  }
+}
+
+// Accordion functionality
+const accBtns = document.querySelectorAll(".accordionBtn");
+accBtns.forEach(btn => {
+  btn.addEventListener("click", function() {
+    const panel = this.nextElementSibling;
+    const isOpen = panel.style.maxHeight && panel.style.maxHeight !== "0px";
+    document.querySelectorAll(".panel").forEach(p => p.style.maxHeight = null);
+    panel.style.maxHeight = isOpen ? null : panel.scrollHeight + "px";
+  });
+});
+
+// Spectrum Access simulated ESP32 data
+function fetchSpectrumData() {
+  const dataElem = document.getElementById("spectrumData");
+  setTimeout(() => {
+    dataElem.innerHTML = `
+      <strong>Available Frequencies:</strong><br>
+      433.1 MHz - Free<br>
+      434.5 MHz - Occupied<br>
+      445.0 MHz - Free
+    `;
+  }, 1000);
+}
+fetchSpectrumData();
+</script>
+</body>
+</html>
